@@ -6,7 +6,6 @@ import fire
 import torch
 from global_utils import device
 from global_whisper_utils import LibriSpeechDataset, WhisperActivationCache
-from probes.train.dataset import MultiClassDataset
 
 OUT_DIR = "/exp/ellenar/whisper_activations"
 LANG_CODE = "fr"
@@ -35,10 +34,10 @@ def get_activations(
     actv_cache = WhisperActivationCache(
         model_name=model_name, activations_to_cache=activations_to_cache
     )
-    dataset = MultiClassDataset(
-        num_entries=num_samples, class_labels=[class_label], sql_path=sql_path
-    )
-    # dataset = LibriSpeechDataset(url="dev-clean", return_mels=True)
+    # dataset = MultiClassDataset(
+    #     num_entries=num_samples, class_labels=[class_label], sql_path=sql_path
+    # )
+    dataset = LibriSpeechDataset(root="/librispeech", url="dev-clean", return_mels=True)
     dataloader = iter(torch.utils.data.DataLoader(dataset, batch_size=batch_size))
     all_actvs = defaultdict(list)  # layer_name: activations
     for i, (data, *labels) in enumerate(dataloader):
